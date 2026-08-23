@@ -1,0 +1,10 @@
+{
+	"extends": "@lioness100/configs/tsconfig",
+	"compilerOptions": {
+		"outDir": "dist",
+		"rootDir": "src",
+		"baseUrl": "src",
+		"types": ["bun"]
+	},
+	"include": ["src"]
+}

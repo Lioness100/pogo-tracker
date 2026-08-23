@@ -1,0 +1,28 @@
+{
+	"name": "pogo-tracker",
+	"module": "src/index.ts",
+	"private": true,
+	"type": "module",
+	"scripts": {
+		"start": "bun ."
+	},
+	"devDependencies": {
+		"@lioness100/configs": "^1.0.34",
+		"@types/bun": "^1.4.0",
+		"eslint": "^8.57.0",
+		"prettier": "^3.6.2"
+	},
+	"peerDependencies": {
+		"typescript": "^5"
+	},
+	"eslintConfig": {
+		"extends": [
+			"./node_modules/@lioness100/configs/.eslintrc.json"
+		]
+	},
+	"prettier": "@lioness100/configs/prettier",
+	"dependencies": {
+		"graphql": "^17.0.2",
+		"graphql-request": "^7.4.0"
+	}
+}
