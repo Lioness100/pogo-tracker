@@ -25,20 +25,28 @@ alarms sounding every `n` minutes, so I recommend the focus mode setup.
 1. In your settings, create a focus mode called "Raid Tracking" (or whatever you want).
 2. Create a shortcut called "Start Raid Tracking" that sets the focus mode to
    "Raid Tracking" for `n` minutes.
-   ![Start Raid Tracking](https://i.imgur.com/IJhKJmB.png)
+   
+   <img src="https://i.imgur.com/IJhKJmB.png" alt="Start Raid Tracking" max-height="400" width="300" />
+
 3. Create a shortcut called "Check for Raids" that queries the `pogo-tracker` API with your
    coordinates and sends a notification if any raids are hatching soon.
-   ![Check for Raids](https://i.imgur.com/ZNHcx0f.png)
+   
+   <img src="https://i.imgur.com/ZNHcx0f.png" alt="Check for Raids" max-height="400" width="300" />
+
 4. Create an automation triggered by "Time of Day" that runs "Start Raid
    Tracking" every day at 6AM (or whatever time you want to start tracking
    raids).
-   ![Start Raid Tracking Automation](https://i.imgur.com/JLmGWJZ.png)
+   
+   <img src="https://i.imgur.com/JLmGWJZ.png" alt="Start Raid Tracking Automation" max-height="400" width="300" />
+
 5. Create an automation triggered by "When Raid Tracking is Turned Off". If it
    is before 9:59PM, run "Check for Raids" and then "Start Raid Tracking".
    Otherwise, do nothing (so Raid Tracking turns off when eggs stop hatching for
    the day).
-   ![Check for Raids Automation](https://i.imgur.com/JCk55mv.png)
-   ![Check for Raids Automation Internal](https://i.imgur.com/0QBDttL.png)
+   
+   <img src="https://i.imgur.com/JCk55mv.png" alt="Check for Raids Automation" max-height="400" width="300" />
+   <img src="https://i.imgur.com/0QBDttL.png" alt="Check for Raids Automation
+   Internal" max-height="400" width="300" />
 
 To install:
 
