@@ -3,8 +3,10 @@ import { checkLocalGyms } from './campfire';
 async function checkLocation(req: Request) {
 	try {
 		const body = await req.json();
+		const lat = Number(body.lat);
+		const lng = Number(body.lng);
 
-		if (typeof body.lat !== 'number' || typeof body.lng !== 'number') {
+		if (Number.isNaN(lat) || Number.isNaN(lng)) {
 			return Response.json({ error: 'lat and lng must be numbers' }, { status: 400 });
 		}
 
