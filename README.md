@@ -29,9 +29,11 @@ alarms sounding every `n` minutes, so I recommend the focus mode setup.
    <img src="https://i.imgur.com/IJhKJmB.png" alt="Start Raid Tracking" max-height="400" width="300" />
 
 3. Create a shortcut called "Check for Raids" that queries the `pogo-tracker` API with your
-   coordinates and sends a notification if any raids are hatching soon.
+   coordinates and sends a notification if any raids are hatching soon. At the
+   moment, I am making `https://pogo.jsiegel.dev` available for public use as a
+   hosted instance of this API. Hopefully it's not abused.
    
-   <img src="https://i.imgur.com/ZNHcx0f.png" alt="Check for Raids" max-height="400" width="300" />
+   <img src="https://i.imgur.com/Zfb23MB.png" alt="Check for Raids" max-height="400" width="300" />
 
 4. Create an automation triggered by "Time of Day" that runs "Start Raid
    Tracking" every day at 6AM (or whatever time you want to start tracking
