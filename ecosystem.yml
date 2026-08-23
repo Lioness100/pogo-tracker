@@ -1,0 +1,5 @@
+apps:
+  - name: 'pogo-tracker'
+    script: 'src/index.ts'
+    interpreter: 'bun'
+    time: true

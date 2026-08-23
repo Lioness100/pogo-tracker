@@ -4,7 +4,8 @@
 	"private": true,
 	"type": "module",
 	"scripts": {
-		"start": "bun ."
+		"start": "bun .",
+		"pm2": "pm2 start ecosystem.yml"
 	},
 	"devDependencies": {
 		"@lioness100/configs": "^1.0.34",
