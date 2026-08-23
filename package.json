@@ -7,10 +7,15 @@
 		"start": "bun .",
 		"pm2": "pm2 start ecosystem.yml"
 	},
+	"dependencies": {
+		"graphql": "^17.0.2",
+		"graphql-request": "^7.4.0"
+	},
 	"devDependencies": {
 		"@lioness100/configs": "^1.0.34",
 		"@types/bun": "^1.4.0",
 		"eslint": "^8.57.0",
+		"pm2": "^7.0.3",
 		"prettier": "^3.6.2"
 	},
 	"peerDependencies": {
@@ -21,9 +26,5 @@
 			"./node_modules/@lioness100/configs/.eslintrc.json"
 		]
 	},
-	"prettier": "@lioness100/configs/prettier",
-	"dependencies": {
-		"graphql": "^17.0.2",
-		"graphql-request": "^7.4.0"
-	}
+	"prettier": "@lioness100/configs/prettier"
 }
