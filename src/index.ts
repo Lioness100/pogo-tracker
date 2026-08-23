@@ -3,15 +3,15 @@ import { checkLocalGyms } from './campfire';
 async function checkLocation(req: Request) {
 	try {
 		const body = await req.json();
-		const lat = parseInt(body.lat);
-		const lng = parseInt(body.lng);
+		const lat = Number(body.lat);
+		const lng = Number(body.lng);
 
-		if (Number.isNaN(lat) || Number.isNaN(lng)) {
+		if (isNaN(lat) || isNaN(lng)) {
 			return Response.json({ error: 'lat and lng must be numbers' }, { status: 400 });
 		}
 
 		return Response.json({
-			notification: await checkLocalGyms(body.lat, body.lng)
+			notification: await checkLocalGyms(lat, lng)
 		});
 	} catch (error) {
 		console.error(error);
