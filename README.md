@@ -2,9 +2,9 @@
 
 Given your coordinates, this program will query the internal Niantic Campfire
 API for nearby raids and tell you if any 4, 5, or 6 star raid eggs are hatching
-within the next 5 minutes. This is useful for getting a jump on hosting raids on
-PokeGenie, where having a long amount of time to wait in queue before the raid
-expires is an advantage.
+in your 80-meter radius within the next 5 minutes. This is useful for getting a
+jump on hosting raids on PokeGenie, where having a long amount of time to wait
+in queue before the raid expires is an advantage.
 
 The idea is to integrate this API into an iOS automation that will run every `n`
 minutes and send the device location with the native `Get Current Location`
