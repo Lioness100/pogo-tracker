@@ -9,7 +9,7 @@ interface RaidQueryResponse {
 		pgoGym?: {
 			raid?: {
 				hatchTime: string;
-				rating: number;
+				rating: string;
 			};
 		};
 	}[];
@@ -58,7 +58,12 @@ export async function checkLocalGyms(lat: number, lng: number) {
 
 	for (const { pgoGym } of result.realityChannelMapObjectsInLatLngBounds) {
 		const raid = pgoGym?.raid;
-		if (!raid || Number(raid.rating) < 4) {
+
+		// If a raid is >10, it is a shadow raid, and the rating is the second digit.
+		let rating = Number(raid?.rating) % 10;
+		rating = rating === 6 ? 4 : rating;
+
+		if (!raid || rating < 4) {
 			continue;
 		}
 
@@ -69,7 +74,7 @@ export async function checkLocalGyms(lat: number, lng: number) {
 
 		const FIVE_MINUTES = 5 * 60_000;
 		if (start >= now && start <= now + FIVE_MINUTES) {
-			return `🚨 ${raid.rating}★ raid egg hatching in ${Math.floor((start - now) / (60 * 1000))} minutes!`;
+			return `🚨 ${rating}★ raid egg hatching in ${Math.floor((start - now) / (60 * 1000))} minutes!`;
 		}
 	}
 
