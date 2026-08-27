@@ -1,6 +1,6 @@
+import { getBoundsOfDistance, getDistance } from 'geolib';
 import { request } from 'graphql-request';
 
-const RADIUS = 80;
 const GRAPHQL_URL = 'https://niantic-social-api.nianticlabs.com/graphql';
 const REALITY_CHANNEL_ID = '0d822c6f-81fc-4100-ac15-45537ca69454';
 
@@ -10,7 +10,13 @@ interface RaidQueryResponse {
 			raid?: {
 				hatchTime: string;
 				rating: string;
+				eggImageUrl: string;
 			};
+			location?: {
+				latitude: number;
+				longitude: number;
+			};
+			name: string;
 		};
 	}[];
 }
@@ -22,61 +28,85 @@ const query = `
 				raid {
 					rating
 					hatchTime
+					eggImageUrl
 				}
+
+				location {
+					latitude
+					longitude
+				}
+
+				name
 			}
 		}
 	}
 `;
 
-function getBounds(lat: number, lng: number) {
-	const dLat = RADIUS / 111_320;
-	const dLng = RADIUS / (111_320 * Math.cos((lat * Math.PI) / 180));
-
-	return {
-		sw: { lat: lat - dLat, lng: lng - dLng },
-		ne: { lat: lat + dLat, lng: lng + dLng }
-	};
-}
-
-export async function checkLocalGyms(lat: number, lng: number) {
+export async function checkLocalGyms(
+	latitude: number,
+	longitude: number,
+	withinMinutes: number,
+	ratingThreshold: number,
+	radius: number
+) {
 	const date = new Date();
 	const hour = date.getHours();
 	if (hour < 6 || hour > 22) {
 		return null;
 	}
 
+	const [sw, ne] = getBoundsOfDistance({ latitude, longitude }, radius);
 	const variables = {
 		realityChannelMapObjectsInLatLngBoundsInput: {
 			sources: [{ name: 'PGO', dropTypes: ['PGO_GYM'] }],
 			realityChannelId: REALITY_CHANNEL_ID,
-			bounds: getBounds(lat, lng)
+			bounds: {
+				sw: { lat: sw.latitude, lng: sw.longitude },
+				ne: { lat: ne.latitude, lng: ne.longitude }
+			}
 		}
 	};
 
 	const result = await request<RaidQueryResponse>({ url: GRAPHQL_URL, document: query, variables });
 	const now = date.getTime();
 
-	for (const { pgoGym } of result.realityChannelMapObjectsInLatLngBounds) {
-		const raid = pgoGym?.raid;
+	const MINUTES = withinMinutes * 60_000;
+	const eligibleEggs = result.realityChannelMapObjectsInLatLngBounds.flatMap(({ pgoGym }) => {
+		const { raid, location } = pgoGym ?? {};
+		if (!raid || !location) {
+			return [];
+		}
 
-		// If a raid is >10, it is a shadow raid, and the rating is the second digit.
-		let rating = Number(raid?.rating) % 10;
-		rating = rating === 6 ? 4 : rating;
-
-		if (!raid || rating < 4) {
-			continue;
+		// If a rating is >10, it is a shadow raid, and the rating is the
+		// second digit. If the rating is 6, it's a mega raid, usually 4★.
+		let rating = raid.rating === '6' ? 4 : Number(raid.rating) % 10;
+		if (rating < ratingThreshold) {
+			return [];
 		}
 
 		const start = Date.parse(raid.hatchTime);
 		if (Number.isNaN(start)) {
-			continue;
+			return [];
 		}
 
-		const FIVE_MINUTES = 5 * 60_000;
-		if (start >= now && start <= now + FIVE_MINUTES) {
-			return `🚨 ${rating}★ raid egg hatching in ${Math.floor((start - now) / (60 * 1000))} minutes!`;
+		if (start < now || start > now + MINUTES) {
+			return [];
 		}
+
+		const isShadow = Number(raid.rating) > 10;
+		const distance = getDistance({ latitude, longitude }, location);
+		return [{ rating, start, isShadow, eggImageUrl: raid.eggImageUrl, location, distance, name: pgoGym!.name }];
+	});
+
+	eligibleEggs.sort((a, b) => {
+		return a.start - b.start;
+	});
+
+	if (eligibleEggs.length > 0) {
+		const nextEgg = eligibleEggs[0];
+		const notification = `🚨 ${nextEgg.rating}★ ${nextEgg.isShadow ? 'shadow' : ''} raid egg hatching in ${Math.floor((nextEgg.start - now) / (60 * 1000))} minutes!`;
+		return { data: eligibleEggs, notification };
 	}
 
-	return null;
+	return { data: [], notification: null };
 }

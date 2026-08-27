@@ -10,9 +10,23 @@ async function checkLocation(req: Request) {
 			return Response.json({ error: 'lat and lng must be numbers' }, { status: 400 });
 		}
 
-		return Response.json({
-			notification: await checkLocalGyms(lat, lng)
-		});
+		const withinMinutes = Number(body.withinMinutes ?? 5);
+		const ratingThreshold = Number(body.ratingThreshold ?? 4);
+		const radius = Number(body.radius ?? 80);
+
+		if (isNaN(withinMinutes)) {
+			return Response.json({ error: 'withinMinutes must be a number' }, { status: 400 });
+		}
+
+		if (isNaN(ratingThreshold)) {
+			return Response.json({ error: 'ratingThreshold must be a number' }, { status: 400 });
+		}
+
+		if (isNaN(radius)) {
+			return Response.json({ error: 'radius must be a number' }, { status: 400 });
+		}
+
+		return Response.json(await checkLocalGyms(lat, lng, withinMinutes, ratingThreshold, radius));
 	} catch (error) {
 		console.error(error);
 
@@ -22,7 +36,10 @@ async function checkLocation(req: Request) {
 
 Bun.serve({
 	port: Number(process.env.PORT ?? 3000),
-	routes: { '/location': { POST: checkLocation } }
+	routes: {
+		'/': Bun.file('public/index.html'),
+		'/location': { POST: checkLocation }
+	}
 });
 
 console.log(`Listening on http://localhost:${process.env.PORT ?? 3000}`);
