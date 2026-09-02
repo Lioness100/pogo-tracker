@@ -78,8 +78,9 @@ export async function checkLocalGyms(
 		}
 
 		// If a rating is >10, it is a shadow raid, and the rating is the
-		// second digit. If the rating is 6, it's a mega raid, usually 4★.
-		let rating = raid.rating === '6' ? 4 : Number(raid.rating) % 10;
+		// second digit. If the rating is 6, it's a 4★ mega raid. If the rating
+		// is 7, it's a 6★ mega raid.
+		let rating = { '6': 4, '7': 6 }[raid.rating] ?? Number(raid.rating) % 10;
 		if (rating < ratingThreshold) {
 			return [];
 		}
